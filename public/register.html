@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pl-pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Turtle23 Official Page - Register</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/styles_utillities.css">
+  <link rel="stylesheet" href="styles/styles_login.css">
+</head>
+<body>
+  <header class="topnav">
+    <a href="index.html" class="logo-link">
+      <img class="logo" src="images/logo_circle.png" alt="Logo">
+    </a>
+    <div class="hamburger-menu" id="hamburger-menu">
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </div>
+  </header>
+
+  <nav class="side-menu" id="side-menu">
+    <a href="index.html">Home</a>
+    <a href="HistoriaSerwera.html">Historia Serwera</a>
+    <a href="Podziekowania.html">Podziękowania</a>
+    <a href="CentrumInformacyjne.html">Centrum Informacyjne</a>
+    <a href="TurtleResourcePack.html" class="login-required">Turtle Resourspack🔒</a>
+    <a href="BialaLista.html" class="login-required">Biała Lista🔒</a>
+    <a href="BlogStanMara.html" class="login-required">Blog StanMara🔒</a>
+    <a href="OnlineChat.html" class="login-required">Online Chat🔒</a>
+  </nav>
+
+  <main class="background-container">
+    <div class="overlay-box login-overlay">
+      <div class="login-form-container">
+        <h1>Register New User</h1>
+        <form id="register-form">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" placeholder="Enter a new username" required>
+
+          <label for="password1">Create a Password</label>
+          <input type="password" id="password1" name="password1" placeholder="Enter new password" required>
+
+          <label for="password2">Repeat Password</label>
+          <input type="password" id="password2" name="password2" placeholder="Repeat your password" required>
+
+          <button type="submit" class="login-btn">Register</button>
+        </form>
+        <p class="login-note">Already have an account? <a href="login.html">Login</a></p>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer_class">
+    <a class="footer_text">Strona została stworzona przez Polskiego Pelikana! :)</a>
+  </footer>
+
+  <script>
+  document.getElementById('register-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const username = document.getElementById('username').value.trim();
+    const password1 = document.getElementById('password1').value;
+    const password2 = document.getElementById('password2').value;
+
+    const usernameRegex = /^[a-zA-Z0-9 ]{1,17}$/;
+
+    if (!usernameRegex.test(username)) {
+      alert("Username must be 1–17 characters long and contain only letters, numbers, and spaces.");
+      return;
+    }
+
+    if (password1 !== password2) {
+      alert("Passwords do not match!");
+      return;
+    }
+
+    if (password1.length < 8) {
+      alert("Password must be at least 8 characters long.");
+      return;
+    }
+
+    const response = await fetch('/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password1, password2 })
+    });
+
+    const result = await response.json();
+    if (result.success) {
+      window.location.href = result.redirect;
+    } else {
+      alert(result.message);
+    }
+  });
+  const hamburgerMenu = document.getElementById('hamburger-menu');
+const sideMenu = document.getElementById('side-menu');
+
+function spinHamburger(forward = true) {
+    const spinClass = forward ? 'spin-forward' : 'spin-backward';
+    hamburgerMenu.classList.add(spinClass);
+    setTimeout(() => {
+        hamburgerMenu.classList.remove('spin-forward', 'spin-backward');
+    }, 600);
+}
+
+hamburgerMenu.addEventListener('click', (event) => {
+    const opening = !sideMenu.classList.contains('active');
+    sideMenu.classList.toggle('active');
+    spinHamburger(opening);
+    event.stopPropagation();
+});
+
+document.addEventListener('click', (event) => {
+    if (!sideMenu.contains(event.target) && !hamburgerMenu.contains(event.target)) {
+        if (sideMenu.classList.contains('active')) {
+            sideMenu.classList.remove('active');
+            spinHamburger(false);
+        }
+    }
+});
+  </script>
+  <script>
+fetch('/current-user')
+  .then(res => res.json())
+  .then(data => {
+    const isLoggedIn = !!data.username;
+
+    document.querySelectorAll('.login-required').forEach(link => {
+      if (!isLoggedIn) {
+        link.href = '/error.html';
+      } else {
+        // Remove lock icon from link text
+        link.textContent = link.textContent.replace(/🔒/g, '');
+      }
+    });
+
+    // Optional: update login button
+    const loginButton = document.getElementById('user-button');
+    if (loginButton) {
+      if (isLoggedIn) {
+        loginButton.innerHTML = `
+          <img src="images/user_icon.png" alt="User" style="width:24px;height:24px;vertical-align:middle;margin-right:8px;">
+          ${data.username}
+        `;
+        loginButton.onclick = () => {
+          window.location.href = 'UserInterface.html';
+        };
+      } else {
+        loginButton.textContent = 'Login';
+        loginButton.onclick = () => {
+          window.location.href = 'login.html';
+        };
+      }
+    }
+  });
+</script>
+</body>
+</html>

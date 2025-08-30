@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pl-pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turtle23 Official Page - Login Completed</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/styles_online_chat.css">
+</head>
+<body>
+    <header class="topnav">
+        <h1 class="title">Logowanie użytkowniaka zakończona!</h1>
+    </header>
+
+    <main class="background-container">
+        <div class="overlay-box">
+            <p>Użytkowniku, za 2 sekundy zostaniesz przekierowany na stronę główną!</p>
+        </div>
+    </main>
+
+    <footer class="footer_class">
+        <a class="footer_text" href="">Strona została stworzona przez Polskiego Pelikana! :)</a>
+    </footer>
+
+    <script src="scripts.js"></script>
+    <script>
+        setTimeout(() => {
+            window.location.href = "index.html";
+        }, 2000); // 2000ms = 2 seconds
+    </script>
+    <script>
+fetch('/current-user')
+  .then(res => res.json())
+  .then(data => {
+    const isLoggedIn = !!data.username;
+    document.querySelectorAll('.login-required').forEach(link => {
+      if (!isLoggedIn) {
+        link.href = '/error.html';
+      }
+    });
+  });
+</script>
+</body>
+</html>

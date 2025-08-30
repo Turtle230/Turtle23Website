@@ -1,0 +1,396 @@
+/* ============================
+   GENERAL SETTINGS
+============================ */
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    font-family: "Pixelify Sans", sans-serif;
+    font-size: large;
+    background-color: #282828;
+    color: white;
+    scroll-behavior: smooth;
+}
+
+/* ============================
+   TOP NAVIGATION
+============================ */
+.topnav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #333;
+    padding: 10px 5%;
+    flex-shrink: 0;
+}
+
+.logo-link {
+    display: flex;
+    align-items: center;
+    flex-shrink: 1;
+}
+
+.logo {
+    width: 80px;
+    max-width: 15vw;
+}
+
+/* Keyframes for continuous rotation */
+@keyframes rotate360 {
+    from {
+        transform: scale(1.15) rotate(0deg);
+    }
+    to {
+        transform: scale(1.15) rotate(360deg);
+    }
+}
+
+/* On hover: scale up slightly and start rotating */
+.logo-link:hover .logo {
+    transform: scale(1.15) rotate(360deg);
+    content: url("/images/logo_circle_hover.png");
+    animation: rotate360 4s linear infinite;
+}
+
+.title {
+    font-size: 2rem;
+    text-align: center;
+    flex: none;         /* prevents stretching */
+    margin: 0 auto;     /* centers horizontally */
+    white-space: nowrap;
+    transition: border 0.3s ease, background-color 0.3s ease;
+    cursor: pointer;
+}
+
+.title:hover {
+    background-color: #4a86ce;
+    color: #fff;
+    border: thick outset #3569a8;
+}
+
+.hamburger-menu {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 35px;
+  height: 28px;
+  flex-shrink: 0;
+  cursor: pointer;
+  transform-origin: center;
+  will-change: transform;
+  transform: rotate(0deg); /* 👈 baseline rotation */
+}
+
+.hamburger-menu .bar {
+  width: 100%;
+  height: 3px;
+  background-color: white;
+  transition: background-color 0.3s ease;
+}
+
+.hamburger-menu:hover .bar {
+  background-color: #4a86ce;
+}
+
+/* ============================
+   HAMBURGER SPIN ANIMATION
+============================ */
+@keyframes spin360 {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes spinMinus360 {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+
+.hamburger-menu.spin-forward {
+  animation: spin360 0.6s ease-in-out;
+  transform: rotate(360deg); /* 👈 apply rotation */
+}
+
+.hamburger-menu.spin-backward {
+  animation: spinMinus360 0.6s ease-in-out;
+  transform: rotate(-360deg); /* 👈 apply reverse rotation */
+}
+
+
+/* ============================
+   SIDE MENU
+============================ */
+.side-menu {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 80%;
+    max-width: 300px;
+    height: 100vh;
+    background-color: #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 60px;
+    border-left: 5px solid #4a86ce;
+    transition: right 0.3s ease-in-out;
+    z-index: 9999;
+    box-sizing: border-box; /* ensures padding and borders stay inside */
+}
+
+.side-menu a {
+    width: 100%;              /* full width of menu */
+    box-sizing: border-box;    /* include padding/borders in width */
+    padding: 15px 10px;
+    text-align: center;
+    font-size: 1.2rem;
+    color: white;
+    background-color: #444;
+    border-bottom: 5px solid #4a86ce;
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;  /* truncate long text */
+    transition: background-color 0.3s ease;
+}
+
+.side-menu a:hover {
+    background-color: #4a86ce;
+    border: thick outset #3569a8;
+}
+
+.side-menu.active {
+    right: 0;
+}
+
+.side-menu .login-btn {
+    width: 90%;                   /* slightly smaller width */
+    padding: 12px 10px;           /* slightly less height */
+    margin-top: 20px;             /* adds spacing from other links */
+    text-align: center;
+    font-size: 1.1rem;            /* slightly smaller font */
+    font-family: "Pixelify Sans", sans-serif;
+    color: white;
+    background-color: #444;
+    border: 5px solid #4a86ce;
+    border-radius: 0;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: background-color 0.3s ease, border 0.3s ease;
+}
+
+.side-menu .login-btn:hover {
+    background-color: #4a86ce;
+    border: thick outset #3569a8;
+    color: white;
+}
+
+/* ============================
+   BACKGROUND AND OVERLAY
+============================ */
+.background-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1; /* fill remaining space */
+    width: 100%;
+    background-image: url(/images/wallpaper3.png);
+    background-size: cover;
+    background-position: center;
+}
+
+.overlay-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    padding: 5vw;
+    background-color: rgba(0, 0, 0, 0.5);
+    box-sizing: border-box;
+    font-size: 1.5vw;
+}
+
+.overlay-box h1 {
+    margin-bottom: 10px;
+}
+
+.overlay-box p {
+    font-size: 1.5rem;
+    color: #ccc;
+}
+
+.overlay-box a {
+    color: #ccc;
+    text-decoration: none;
+    font-size: 1.2rem;
+}
+
+.overlay-box a:hover {
+    background-color: #4a86ce;
+    color: #fff;
+    border: thick outset #3569a8;
+}
+
+/* ============================
+   FOOTER
+============================ */
+footer {
+  background-color: #333;
+  padding: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.footer_class a {
+  color: #f2f2f2;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.footer_class a:hover {
+  background-color: #4a86ce;
+  color: #fff;
+  border: thick outset #3569a8;
+}
+
+/* ============================
+   CHAT MENU
+============================ */
+.chat-menu {
+  font-family: "Pixelify Sans", sans-serif;
+  max-width: 400px;
+  width: 90%;
+  margin: 60px auto;
+  padding: 30px 20px;
+  background-color: #333;
+  border: 5px solid #4a86ce;
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-sizing: border-box;
+  color: white;
+}
+
+.chat-menu h2 {
+  font-size: 1.8rem;
+  text-align: center;
+  margin-bottom: 10px;
+  border-bottom: 2px solid #4a86ce;
+  padding-bottom: 10px;
+  color: #fff;
+}
+
+/* ============================
+   CONVERSATION LIST
+============================ */
+.conversation-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.conversation-list li {
+  background-color: #444;
+  padding: 12px 15px;
+  font-size: 1rem;
+  color: #fff;
+  transition: background-color 0.3s ease, border 0.3s ease;
+}
+
+.conversation-list a {
+  color: inherit;
+  text-decoration: none;
+  display: block;
+}
+
+/* ✅ Disable hover effect for specific links */
+.conversation-list a.no-hover:hover {
+  background-color: inherit !important;
+  color: inherit !important;
+  border: none !important;
+  cursor: default !important;
+}
+
+/* ============================
+   NEW CHAT BUTTON
+============================ */
+#new-chat-btn {
+  font-family: "Pixelify Sans", sans-serif;
+  padding: 12px 0;
+  background-color: #444;
+  color: #fff;
+  border: 5px solid #4a86ce;
+  border-radius: 0;
+  font-size: 1.1rem;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.3s ease, border 0.3s ease;
+}
+
+#new-chat-btn:hover {
+  background-color: #4a86ce;
+  border: thick outset #3569a8;
+}
+
+
+/* ============================
+   MEDIA QUERIES FOR MOBILE
+============================ */
+@media screen and (max-width: 768px) {
+    /* Topnav adjustments */
+    .topnav {
+        flex-wrap: nowrap; /* keep items in one row */
+        justify-content: space-between; /* logo left, hamburger right */
+        padding: 8px 10px;
+    }
+
+    .logo {
+        width: 50px;
+        max-width: 20vw;
+    }
+
+    .title {
+        font-size: 1rem;
+        margin: 0 auto;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        flex: none;
+    }
+
+    .hamburger-menu {
+        width: 28px;
+        height: 22px;
+    }
+
+    .hamburger-menu .bar {
+        height: 3px;
+    }
+
+    /* Overlay adjustments */
+    .overlay-box {
+        font-size: 1rem;
+        padding: 15px;
+    }
+
+    .overlay-box p {
+        font-size: 1.2rem;
+    }
+
+    .overlay-box a {
+        font-size: 1rem;
+    }
+
+    /* Side menu full width on mobile */
+    .side-menu {
+        width: 100%;
+    }
+}

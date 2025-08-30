@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pl-pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Turtle23 Official Page - User Interface</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/styles_utillities.css">
+  <link rel="stylesheet" href="styles/styles_user.css">
+</head>
+<body>
+  <header class="topnav">
+    <a href="index.html" class="logo-link">
+      <img class="logo" src="images/logo_circle.png" alt="Logo">
+    </a>
+    <div class="hamburger-menu" id="hamburger-menu">
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </div>
+  </header>
+
+  <nav class="side-menu" id="side-menu">
+    <a href="index.html">Home</a>
+    <a href="HistoriaSerwera.html">Historia Serwera</a>
+    <a href="Podziekowania.html">Podziękowania</a>
+    <a href="CentrumInformacyjne.html">Centrum Informacyjne</a>
+    <a href="TurtleResourcePack.html" class="login-required">Turtle Resourspack🔒</a>
+    <a href="BialaLista.html" class="login-required">Biała Lista🔒</a>
+    <a href="BlogStanMara.html" class="login-required">Blog StanMara🔒</a>
+    <a href="OnlineChat.html" class="login-required">Online Chat🔒</a>
+  </nav>
+
+  <main class="background-container">
+    <div class="overlay-box">
+      <section id="user-profile" class="user-profile hidden">
+        <h2>Profil użytkownika</h2>
+
+        <!-- Username display -->
+        <div class="profile-field">
+          <label for="current-username">Obecna nazwa użytkownika:</label>
+          <input type="text" id="current-username" disabled>
+        </div>
+        <!-- Password verification -->
+        <div class="profile-field">
+          <p>Zmień hasło</p>
+          <label for="current-password">Obecne hasło:</label>
+          <input type="password" id="current-password" placeholder="••••••••">
+          <button class="profile-btn" id="verify-password-btn">Zweryfikuj</button>
+        </div>
+
+        <!-- Hidden password update section -->
+        <div id="new-password-section" class="hidden">
+          <div class="profile-field">
+            <label for="new-password">Nowe hasło:</label>
+            <input type="password" id="new-password" placeholder="Wprowadź nowe hasło">
+          </div>
+
+          <div class="profile-field">
+            <label for="repeat-password">Powtórz nowe hasło:</label>
+            <input type="password" id="repeat-password" placeholder="Powtórz hasło">
+          </div>
+
+          <button class="profile-btn" onclick="submitNewPassword()">ㅤZapisz nowe hasłoㅤ</button>
+        </div>
+
+        <!-- Logout and delete buttons -->
+        <div class="dashboard-actions">
+          <button class="profile-btn" onclick="logoutUser()">ㅤWyloguj sięㅤ</button>
+          <button class="profile-btn danger" onclick="confirmDelete()">ㅤUsuń kontoㅤ</button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer_class">
+    <a class="footer_text" href="#">Strona została stworzona przez Polskiego Pelikana! :)</a>
+  </footer>
+
+  <script src="scripts.js"></script>
+  <script>
+    // Load user info
+    fetch('/current-user')
+      .then(res => res.json())
+      .then(data => {
+        if (data.username) {
+          document.getElementById('user-profile').classList.remove('hidden');
+          document.getElementById('current-username').value = data.username;
+        }
+      });
+
+    // Verify password
+    document.getElementById('verify-password-btn').addEventListener('click', () => {
+      const currentPassword = document.getElementById('current-password').value;
+
+      fetch('/verify-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: currentPassword })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.valid) {
+          document.getElementById('new-password-section').classList.remove('hidden');
+        } else {
+          alert('Nieprawidłowe hasło. Spróbuj ponownie.');
+        }
+      })
+      .catch(() => alert('Wystąpił błąd. Spróbuj później.'));
+    });
+
+    // Submit new password
+    function submitNewPassword() {
+      const newPassword = document.getElementById('new-password').value;
+      const repeatPassword = document.getElementById('repeat-password').value;
+
+      if (newPassword !== repeatPassword) {
+        alert('Hasła nie są zgodne.');
+        return;
+      }
+
+      fetch('/update-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ newPassword })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          alert('Hasło zostało zmienione.');
+          document.getElementById('new-password-section').classList.add('hidden');
+          document.getElementById('current-password').value = '';
+        } else {
+          alert('Nie udało się zmienić hasła.');
+        }
+      });
+    }
+
+    // Logout user
+    function logoutUser() {
+      fetch('/logout', { method: 'POST' })
+        .then(() => {
+          alert('Zostałeś wylogowany.');
+          window.location.href = 'index.html';
+        })
+        .catch(() => alert('Błąd podczas wylogowywania.'));
+    }
+
+    // Confirm and delete account
+    function confirmDelete() {
+      if (confirm('Czy na pewno chcesz usunąć swoje konto? Tej operacji nie można cofnąć.')) {
+        fetch('/delete-account', { method: 'DELETE' })
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              alert('Twoje konto zostało usunięte.');
+              window.location.href = 'index.html';
+            } else {
+              alert('Nie udało się usunąć konta.');
+            }
+          })
+          .catch(() => alert('Błąd podczas usuwania konta.'));
+      }
+    }
+  </script>
+  <script>
+    fetch('/current-user')
+  .then(res => res.json())
+  .then(data => {
+    const isLoggedIn = !!data.username;
+
+    document.querySelectorAll('.login-required').forEach(link => {
+      if (!isLoggedIn) {
+        link.href = '/error.html';
+      } else {
+        // Remove lock icon from link text
+        link.textContent = link.textContent.replace(/🔒/g, '');
+      }
+    });
+
+    // Optional: update login button
+    const loginButton = document.getElementById('user-button');
+    if (loginButton) {
+      if (isLoggedIn) {
+        loginButton.innerHTML = `
+          <img src="images/user_icon.png" alt="User" style="width:24px;height:24px;vertical-align:middle;margin-right:8px;">
+          ${data.username}
+        `;
+        loginButton.onclick = () => {
+          window.location.href = 'UserInterface.html';
+        };
+      } else {
+        loginButton.textContent = 'Login';
+        loginButton.onclick = () => {
+          window.location.href = 'login.html';
+        };
+      }
+    }
+  });
+  </script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pl-pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turtle23 Official Page</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/styles_index.css">
+</head>
+<body>
+    <header class="topnav">
+        <a href="index.html" class="logo-link">
+            <img class="logo" src="images/logo_circle.png" alt="Logo">
+        </a>
+        <h1 class="title">Turtle23 Official Page</h1>
+        <div class="hamburger-menu" id="hamburger-menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+    </header>
+
+    <nav class="side-menu" id="side-menu">
+        <a href="HistoriaSerwera.html">Historia Serwera</a>
+        <a href="Podziekowania.html">Podziękowania</a>
+        <a href="CentrumInformacyjne.html">Centrum Informacyjne</a>
+        <a href="TurtleResourcePack.html" class="login-required">Turtle Resourspack🔒</a>
+        <a href="BialaLista.html" class="login-required">Biała Lista🔒</a>
+        <a href="BlogStanMara.html" class="login-required">Blog StanMara🔒</a>
+        <a href="OnlineChat.html" class="login-required">Online Chat🔒</a>
+        <button type="button" class="login-btn" id="user-button">Login</button>
+    </nav>
+
+    <main class="background-container">
+        <div class="overlay-box">
+            <h1>Turtle23 Minecraft Serwer!</h1>
+            <h2></h2>
+        </div>
+    </main>
+
+    <footer class="footer_class">
+        <a class="footer_text" href="">Strona została stworzona przez Polskiego Pelikana! :)</a>
+    </footer>
+
+    <script src="scripts.js"></script>
+    <script>
+document.getElementById('login-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
+
+  const response = await fetch('/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password })
+  });
+
+  const result = await response.json();
+  if (result.success) {
+    window.location.href = result.redirect;
+  } else {
+    alert(result.message);
+  }
+});
+const hamburgerMenu = document.getElementById('hamburger-menu');
+const sideMenu = document.getElementById('side-menu');
+
+function spinHamburger(forward = true) {
+    const spinClass = forward ? 'spin-forward' : 'spin-backward';
+    hamburgerMenu.classList.add(spinClass);
+    setTimeout(() => {
+        hamburgerMenu.classList.remove('spin-forward', 'spin-backward');
+    }, 600);
+}
+
+hamburgerMenu.addEventListener('click', (event) => {
+    const opening = !sideMenu.classList.contains('active');
+    sideMenu.classList.toggle('active');
+    spinHamburger(opening);
+    event.stopPropagation();
+});
+
+document.addEventListener('click', (event) => {
+    if (!sideMenu.contains(event.target) && !hamburgerMenu.contains(event.target)) {
+        if (sideMenu.classList.contains('active')) {
+            sideMenu.classList.remove('active');
+            spinHamburger(false);
+        }
+    }
+});
+</script>
+<script>
+fetch('/current-user')
+  .then(res => res.json())
+  .then(data => {
+    const isLoggedIn = !!data.username;
+
+    document.querySelectorAll('.login-required').forEach(link => {
+      if (!isLoggedIn) {
+        link.href = '/error.html';
+      } else {
+        // Remove lock icon from link text
+        link.textContent = link.textContent.replace(/🔒/g, '');
+      }
+    });
+
+    // Optional: update login button
+    const loginButton = document.getElementById('user-button');
+    if (loginButton) {
+      if (isLoggedIn) {
+        loginButton.innerHTML = `
+          <img src="images/user_icon.png" alt="User" style="width:24px;height:24px;vertical-align:middle;margin-right:8px;">
+          ${data.username}
+        `;
+        loginButton.onclick = () => {
+          window.location.href = 'UserInterface.html';
+        };
+      } else {
+        loginButton.textContent = 'Login';
+        loginButton.onclick = () => {
+          window.location.href = 'login.html';
+        };
+      }
+    }
+  });
+  </script>
+</body>
+</html>

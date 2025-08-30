@@ -1,0 +1,403 @@
+/* ============================
+   GENERAL SETTINGS
+============================ */
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    font-family: "Pixelify Sans", sans-serif;
+    font-size: large;
+    background-color: #282828;
+    color: white;
+    scroll-behavior: smooth;
+}
+
+/* ============================
+   TOP NAVIGATION
+============================ */
+.topnav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #333;
+    padding: 10px 5%;
+    flex-shrink: 0;
+}
+
+.logo-link {
+    display: flex;
+    align-items: center;
+    flex-shrink: 1;
+}
+
+.logo {
+    width: 80px;
+    max-width: 15vw;
+}
+
+/* Keyframes for continuous rotation */
+@keyframes rotate360 {
+    from {
+        transform: scale(1.15) rotate(0deg);
+    }
+    to {
+        transform: scale(1.15) rotate(360deg);
+    }
+}
+
+/* On hover: scale up slightly and start rotating */
+.logo-link:hover .logo {
+    transform: scale(1.15) rotate(360deg);
+    content: url("/images/logo_circle_hover.png");
+    animation: rotate360 4s linear infinite;
+}
+
+.title {
+    font-size: 2rem;
+    text-align: center;
+    flex: none;         /* prevents stretching */
+    margin: 0 auto;     /* centers horizontally */
+    white-space: nowrap;
+    transition: border 0.3s ease, background-color 0.3s ease;
+    cursor: pointer;
+}
+
+.title:hover {
+    background-color: #4a86ce;
+    color: #fff;
+    border: thick outset #3569a8;
+}
+
+.hamburger-menu {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 35px;
+    height: 28px;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.hamburger-menu .bar {
+    width: 100%;
+    height: 3px;
+    background-color: white;
+    transition: background-color 0.3s ease;
+}
+
+.hamburger-menu:hover .bar {
+    background-color: #4a86ce;
+}
+
+/* ============================
+   HAMBURGER SPIN ANIMATION
+============================ */
+@keyframes spin360 {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes spinMinus360 {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(-360deg); }
+}
+
+.hamburger-menu.spin-forward {
+    animation: spin360 0.6s ease-in-out;
+}
+
+.hamburger-menu.spin-backward {
+    animation: spinMinus360 0.6s ease-in-out;
+}
+
+/* ============================
+   NAVIGATION DIVIDER
+============================ */
+.nav-divider {
+  height: 4px;
+  background-color: #4a86ce;
+  width: 100%;
+  flex-shrink: 0;
+}
+/* ============================
+   SIDE MENU
+============================ */
+.side-menu {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 80%;
+    max-width: 300px;
+    height: 100vh;
+    background-color: #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 60px;
+    border-left: 5px solid #4a86ce;
+    transition: right 0.3s ease-in-out;
+    z-index: 9999;
+    box-sizing: border-box; /* ensures padding and borders stay inside */
+}
+
+.side-menu a {
+    width: 100%;              /* full width of menu */
+    box-sizing: border-box;    /* include padding/borders in width */
+    padding: 15px 10px;
+    text-align: center;
+    font-size: 1.2rem;
+    color: white;
+    background-color: #444;
+    border-bottom: 5px solid #4a86ce;
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;  /* truncate long text */
+    transition: background-color 0.3s ease;
+}
+
+.side-menu a:hover {
+    background-color: #4a86ce;
+    border: thick outset #3569a8;
+}
+
+.side-menu.active {
+    right: 0;
+}
+
+.side-menu .login-btn {
+    width: 90%;                   /* slightly smaller width */
+    padding: 12px 10px;           /* slightly less height */
+    margin-top: 20px;             /* adds spacing from other links */
+    text-align: center;
+    font-size: 1.1rem;            /* slightly smaller font */
+    font-family: "Pixelify Sans", sans-serif;
+    color: white;
+    background-color: #444;
+    border: 5px solid #4a86ce;
+    border-radius: 0;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: background-color 0.3s ease, border 0.3s ease;
+}
+
+.side-menu .login-btn:hover {
+    background-color: #4a86ce;
+    border: thick outset #3569a8;
+    color: white;
+}
+
+/* ============================
+   CHAT LAYOUT
+============================ */
+.chat-root {
+  flex: 1;
+  font-family: "Pixelify Sans", sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #333;
+  border-bottom: 5px solid #4a86ce;
+  padding: 10px 14px;
+}
+
+.back-btn {
+  background: #444;
+  font-family: "Pixelify Sans", sans-serif;
+  color: #fff;
+  border: 5px solid #4a86ce;
+  padding: 8px 12px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, border 0.3s ease;
+}
+
+.back-btn:hover {
+  background-color: #4a86ce;
+  border: thick outset #3569a8;
+}
+
+.delete-btn {
+  background-color: #a83232;
+  font-family: "Pixelify Sans", sans-serif;
+  color: #fff;
+  border: 5px solid #832424;
+  padding: 8px 12px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, border 0.3s ease;
+}
+
+.delete-btn:hover {
+  background-color: #d94c4c;
+  border: thick outset #8c1f1f;
+}
+
+.chat-title {
+  font-size: 1.3rem;
+  font-family: "Pixelify Sans", sans-serif;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ============================
+   CHAT MAIN
+============================ */
+.chat-main {
+  flex: 1;
+  font-family: "Pixelify Sans", sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  max-width: 960px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.message-list {
+  flex: 1;
+  font-family: "Pixelify Sans", sans-serif;
+  overflow-y: auto;
+  background: #222;
+  border: 2px solid #4a86ce;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.msg {
+  display: flex;
+  font-family: "Pixelify Sans", sans-serif;
+}
+.msg.me {
+  justify-content: flex-end;
+  font-family: "Pixelify Sans", sans-serif;
+}
+.msg.them {
+  justify-content: flex-start;
+  font-family: "Pixelify Sans", sans-serif;
+}
+
+.bubble {
+  background: #444;
+  font-family: "Pixelify Sans", sans-serif;
+  color: white;
+  padding: 10px 12px;
+  border: 2px solid #4a86ce;
+  max-width: 80%;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+.msg.me .bubble {
+  background: #4a86ce;
+  border-color: #3569a8;
+}
+.meta {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.8rem;
+  color: #ccc;
+}
+
+/* ============================
+   COMPOSER
+============================ */
+.composer {
+  display: flex;
+  gap: 10px;
+}
+.composer input {
+  flex: 1;
+  font-family: "Pixelify Sans", sans-serif;
+  padding: 12px;
+  background: #444;
+  color: white;
+  border: 2px solid #4a86ce;
+  font-size: 1rem;
+}
+.composer input::placeholder {
+  color: #888;
+}
+.composer button {
+  padding: 12px 16px;
+  font-family: "Pixelify Sans", sans-serif;
+  background: #4a86ce;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+.composer button:hover {
+  background-color: #3569a8;
+}
+
+/* ============================
+   FOOTER
+============================ */
+footer {
+  background-color: #333;
+  padding: 20px;
+  text-align: center;
+}
+.footer_class a {
+  color: #f2f2f2;
+  font-size: 1rem;
+  text-decoration: none;
+}
+.footer_class a:hover {
+  background-color: #4a86ce;
+  color: #fff;
+  border: thick outset #3569a8;
+}
+
+/* ============================
+   MOBILE RESPONSIVENESS
+============================ */
+@media screen and (max-width: 768px) {
+  .topnav {
+    flex-wrap: nowrap;
+    padding: 8px 10px;
+  }
+
+  .logo {
+    width: 50px;
+  }
+
+  .title {
+    font-size: 1.2rem;
+  }
+
+  .hamburger-menu {
+    width: 28px;
+    height: 22px;
+  }
+
+  .chat-main {
+    padding: 10px;
+  }
+
+  .bubble {
+    max-width: 100%;
+  }
+
+  .chat-title {
+    font-size: 1.1rem;
+  }
+
+  .side-menu {
+    width: 100%;
+  }
+}

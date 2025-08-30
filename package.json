@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "main": "scripts.js",
   "scripts": {
+    "start": "node server.js",
+    "postinstall": "npm rebuild sqlite3",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -18,3 +20,4 @@
     "sqlite3": "^5.1.7"
   }
 }
+

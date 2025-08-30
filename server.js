@@ -10,7 +10,7 @@ const socketIo = require('socket.io');
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -30,58 +30,72 @@ const db = new sqlite3.Database('users.db', (err) => {
 });
 
 // Create tables
-db.run(`CREATE TABLE IF NOT EXISTS users (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  username TEXT UNIQUE,
-  password TEXT
-)`);
+const tableQueries = [
+  `CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE,
+    password TEXT
+  )`,
+  `CREATE TABLE IF NOT EXISTS conversations (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    is_group INTEGER,
+    title TEXT,
+    created_by TEXT
+  )`,
+  `CREATE TABLE IF NOT EXISTS participants (
+    conversation_id INTEGER,
+    username TEXT
+  )`,
+  `CREATE TABLE IF NOT EXISTS messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    conversation_id INTEGER,
+    sender TEXT,
+    content_encrypted TEXT,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+  )`
+];
+tableQueries.forEach(query => db.run(query));
 
-db.run(`CREATE TABLE IF NOT EXISTS conversations (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  is_group INTEGER,
-  title TEXT,
-  created_by TEXT
-)`);
-
-db.run(`CREATE TABLE IF NOT EXISTS participants (
-  conversation_id INTEGER,
-  username TEXT
-)`);
-
-db.run(`CREATE TABLE IF NOT EXISTS messages (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  conversation_id INTEGER,
-  sender TEXT,
-  content_encrypted TEXT,
-  timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
-)`);
-
-// Middleware to protect routes
+// Auth middleware
 function requireLogin(req, res, next) {
   if (!req.session.username) return res.redirect('/error.html');
   next();
 }
 
-// Public pages
-app.get('/login', (req, res) => res.sendFile(path.join(__dirname, 'login.html')));
-app.get('/register', (req, res) => res.sendFile(path.join(__dirname, 'register.html')));
-app.get('/error.html', (req, res) => res.sendFile(path.join(__dirname, 'error.html')));
-app.get('/registryCompleted.html', (req, res) => res.sendFile(path.join(__dirname, 'registryCompleted.html')));
-app.get('/loginCompleted.html', (req, res) => res.sendFile(path.join(__dirname, 'loginCompleted.html')));
-app.get('/index.html', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+// Public routes
+const publicPages = [
+  'login.html',
+  'register.html',
+  'error.html',
+  'registryCompleted.html',
+  'loginCompleted.html',
+  'index.html',
+  'UserInterface.html'
+];
+publicPages.forEach(page => {
+  app.get(`/${page}`, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', page));
+  });
+});
 
-// Protected pages
-app.get('/TurtleResourcePack.html', requireLogin, (req, res) => res.sendFile(path.join(__dirname, 'TurtleResourcePack.html')));
-app.get('/CentrumInformacyjne.html', requireLogin, (req, res) => res.sendFile(path.join(__dirname, 'CentrumInformacyjne.html')));
-app.get('/BialaLista.html', requireLogin, (req, res) => res.sendFile(path.join(__dirname, 'BialaLista.html')));
-app.get('/BlogStanMara.html', requireLogin, (req, res) => res.sendFile(path.join(__dirname, 'BlogStanMara.html')));
+// Protected routes
+const protectedPages = [
+  'TurtleResourcePack.html',
+  'CentrumInformacyjne.html',
+  'BialaLista.html',
+  'BlogStanMara.html'
+];
+protectedPages.forEach(page => {
+  app.get(`/${page}`, requireLogin, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', page));
+  });
+});
 
-// API: Get current user
+// API routes
 app.get('/current-user', (req, res) => {
   res.json({ username: req.session.username || null });
 });
 
-// Registration
 app.post('/register', async (req, res) => {
   const { username, password1, password2 } = req.body;
 
@@ -103,20 +117,14 @@ app.post('/register', async (req, res) => {
   }
 
   const hashedPassword = await bcrypt.hash(password1, 10);
-
-  db.run(
-    `INSERT INTO users(username, password) VALUES (?, ?)`,
-    [username, hashedPassword],
-    function (err) {
-      if (err) {
-        return res.json({ success: false, message: 'User already exists or error occurred.' });
-      }
-      res.json({ success: true, redirect: '/registryCompleted.html' });
+  db.run(`INSERT INTO users(username, password) VALUES (?, ?)`, [username, hashedPassword], function (err) {
+    if (err) {
+      return res.json({ success: false, message: 'User already exists or error occurred.' });
     }
-  );
+    res.json({ success: true, redirect: '/registryCompleted.html' });
+  });
 });
 
-// Login
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
 
@@ -135,7 +143,6 @@ app.post('/login', (req, res) => {
   });
 });
 
-// Verify password
 app.post('/verify-password', (req, res) => {
   const { password } = req.body;
   const username = req.session.username;
@@ -148,7 +155,6 @@ app.post('/verify-password', (req, res) => {
   });
 });
 
-// Update password
 app.post('/update-password', async (req, res) => {
   const { newPassword } = req.body;
   const username = req.session.username;
@@ -158,14 +164,12 @@ app.post('/update-password', async (req, res) => {
   }
 
   const hashed = await bcrypt.hash(newPassword, 10);
-
   db.run(`UPDATE users SET password = ? WHERE username = ?`, [hashed, username], function (err) {
     if (err) return res.json({ success: false });
     res.json({ success: true });
   });
 });
 
-// Delete account
 app.delete('/delete-account', (req, res) => {
   const username = req.session.username;
 
@@ -178,7 +182,6 @@ app.delete('/delete-account', (req, res) => {
   });
 });
 
-// Logout
 app.post('/logout', (req, res) => {
   req.session.destroy(err => {
     if (err) return res.json({ success: false });
